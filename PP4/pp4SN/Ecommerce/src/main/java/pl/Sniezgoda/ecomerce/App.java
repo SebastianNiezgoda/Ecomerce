@@ -7,6 +7,11 @@ import pl.Sniezgoda.ecomerce.katalog.ArrayListProductStorage;
 import pl.Sniezgoda.ecomerce.katalog.ProductCatalog;
 import pl.Sniezgoda.ecomerce.sales.SalesFacade;
 import pl.Sniezgoda.ecomerce.sales.cart.HashMapCartStorage;
+import pl.Sniezgoda.ecomerce.sales.offering.OfferCalculator;
+import pl.Sniezgoda.ecomerce.sales.payment.PaymentDetails;
+import pl.Sniezgoda.ecomerce.sales.payment.PaymentGateway;
+import pl.Sniezgoda.ecomerce.sales.payment.RegisterPaymentRequest;
+import pl.Sniezgoda.ecomerce.sales.reservation.ReservationRepository;
 
 @SpringBootApplication
 
@@ -26,6 +31,17 @@ public class App {
     @Bean
     SalesFacade createSales()
         {
-        return new SalesFacade(new HashMapCartStorage());
+
+                return new SalesFacade(
+                new HashMapCartStorage(),
+                new OfferCalculator(),
+                new PaymentGateway() {
+                    @Override
+                    public PaymentDetails registerPayment(RegisterPaymentRequest registerPaymentRequest) {
+                        return null;
+                    }
+                },
+                new ReservationRepository()
+        );
     }
 }

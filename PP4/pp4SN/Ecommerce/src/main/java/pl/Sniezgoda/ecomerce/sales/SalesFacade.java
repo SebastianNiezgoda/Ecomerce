@@ -3,13 +3,30 @@ package pl.Sniezgoda.ecomerce.sales;
 
 import pl.Sniezgoda.ecomerce.sales.cart.Cart;
 import pl.Sniezgoda.ecomerce.sales.cart.HashMapCartStorage;
+import pl.Sniezgoda.ecomerce.sales.offering.Offer;
+import pl.Sniezgoda.ecomerce.sales.offering.OfferCalculator;
+import pl.Sniezgoda.ecomerce.sales.payment.PaymentDetails;
+import pl.Sniezgoda.ecomerce.sales.payment.PaymentGateway;
+import pl.Sniezgoda.ecomerce.sales.payment.RegisterPaymentRequest;
+import pl.Sniezgoda.ecomerce.sales.reservation.AcceptOfferRequest;
+import pl.Sniezgoda.ecomerce.sales.reservation.Reservation;
+import pl.Sniezgoda.ecomerce.sales.reservation.ReservationDetails;
+import pl.Sniezgoda.ecomerce.sales.reservation.ReservationRepository;
+
+import java.util.UUID;
 
 
 public class SalesFacade {
     private HashMapCartStorage cartStorage;
+    private OfferCalculator offerCalculator;
+    private PaymentGateway paymentGateway;
+    private ReservationRepository reservationRepository;
 
-    public SalesFacade(HashMapCartStorage cartStorage) {
+    public SalesFacade(HashMapCartStorage cartStorage, OfferCalculator offerCalculator, PaymentGateway paymentGateway, ReservationRepository reservationRespository) {
         this.cartStorage = cartStorage;
+        this.offerCalculator = offerCalculator;
+        this.paymentGateway = paymentGateway;
+        this.reservationRepository = reservationRespository;
     }
 
     public Offer getCurrentOffer(String customerId) {
@@ -29,7 +46,23 @@ public class SalesFacade {
     }
 
     public ReservationDetails acceptOffer(String customerId, AcceptOfferRequest acceptOfferRequest) {
-        return new ReservationDetails();
+        String reservationId = UUID.randomUUID().toString();
+        Offer offer = this.getCurrentOffer(customerId);
+
+        PaymentDetails paymentDetails = paymentGateway.registerPayment(
+                RegisterPaymentRequest.of(reservationId, acceptOfferRequest, offer.getTotal())
+        );
+
+        Reservation reservation = Reservation.of(
+                reservationId,
+                customerId,
+                acceptOfferRequest,
+                offer,
+                paymentDetails);
+
+        reservationRepository.add(reservation);
+
+        return new ReservationDetails(reservationId, paymentDetails.getPaymentUrl());
     }
 
 

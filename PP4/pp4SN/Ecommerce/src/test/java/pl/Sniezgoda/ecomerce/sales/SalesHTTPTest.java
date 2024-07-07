@@ -7,6 +7,9 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import pl.Sniezgoda.ecomerce.sales.offering.Offer;
+import pl.Sniezgoda.ecomerce.sales.reservation.AcceptOfferRequest;
+import pl.Sniezgoda.ecomerce.sales.reservation.ReservationDetails;
 
 import static org.junit.jupiter.api.Assertions.*;
 

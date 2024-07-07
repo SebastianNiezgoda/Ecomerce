@@ -2,6 +2,9 @@ package pl.Sniezgoda.ecomerce.sales;
 
 
 import org.springframework.web.bind.annotation.*;
+import pl.Sniezgoda.ecomerce.sales.offering.Offer;
+import pl.Sniezgoda.ecomerce.sales.reservation.AcceptOfferRequest;
+import pl.Sniezgoda.ecomerce.sales.reservation.ReservationDetails;
 
 
 @RestController
